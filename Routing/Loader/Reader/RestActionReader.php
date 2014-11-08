@@ -32,6 +32,7 @@ class RestActionReader
     private $inflector;
     private $formats;
     private $includeFormat;
+    private $skipTypehinted;
     private $routePrefix;
     private $namePrefix;
     private $parents = array();
@@ -47,13 +48,14 @@ class RestActionReader
      * @param bool               $includeFormat
      * @param array              $formats
      */
-    public function __construct(Reader $annotationReader, ParamReader $paramReader, InflectorInterface $inflector, $includeFormat, array $formats = array())
+    public function __construct(Reader $annotationReader, ParamReader $paramReader, InflectorInterface $inflector, $includeFormat, array $formats = array(), $skipTypehinted = false)
     {
         $this->annotationReader = $annotationReader;
         $this->paramReader = $paramReader;
         $this->inflector = $inflector;
         $this->includeFormat = $includeFormat;
         $this->formats = $formats;
+        $this->skipTypehinted = $skipTypehinted;
     }
 
     /**
@@ -333,17 +335,17 @@ class RestActionReader
         $ignoreClasses = array(
             'Symfony\Component\HttpFoundation\Request',
             'FOS\RestBundle\Request\ParamFetcherInterface',
-            'Symfony\Component\Validator\ConstraintViolationListInterface',
-            'Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter'
+            'Symfony\Component\Validator\ConstraintViolationListInterface'
         );
 
         $arguments = array();
         foreach ($method->getParameters() as $argument) {
-            if (isset($params[$argument->getName()])) {
+            $argumentClass = $argument->getClass();
+
+            if (isset($params[$argument->getName()]) || ($argumentClass && $this->skipTypehinted)) {
                 continue;
             }
 
-            $argumentClass = $argument->getClass();
             if ($argumentClass) {
                 foreach ($ignoreClasses as $class) {
                     if ($argumentClass->getName() === $class || $argumentClass->isSubclassOf($class)) {

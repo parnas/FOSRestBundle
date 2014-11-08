@@ -59,6 +59,7 @@ class Configuration implements ConfigurationInterface
                     ->children()
                         ->scalarNode('default_format')->defaultNull()->end()
                         ->scalarNode('include_format')->defaultTrue()->end()
+                        ->scalarNode('skip_typehinted')->defaultFalse()->end()
                     ->end()
                 ->end()
                 ->arrayNode('body_converter')

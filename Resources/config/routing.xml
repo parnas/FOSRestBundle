@@ -57,6 +57,7 @@
             <argument type="service" id="fos_rest.inflector" />
             <argument>%fos_rest.routing.loader.include_format%</argument>
             <argument>%fos_rest.formats%</argument>
+            <argument>%fos_rest.routing.loader.skip_typehinted%</argument>
         </service>
 
     </services>

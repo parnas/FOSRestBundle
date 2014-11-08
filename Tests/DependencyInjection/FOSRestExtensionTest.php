@@ -167,6 +167,12 @@ class FOSRestExtensionTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(200, $this->container->getParameter('fos_rest.empty_content'));
     }
 
+    public function testSkipTypehintedDefault()
+    {
+        $this->extension->load(array(), $this->container);
+        $this->assertEquals(false, $this->container->getParameter('fos_rest.routing.loader.skip_typehinted'));
+    }
+
     public function testViewSerializeNullDefault()
     {
         $this->extension->load(array(), $this->container);

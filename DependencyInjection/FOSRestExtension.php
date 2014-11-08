@@ -131,6 +131,7 @@ class FOSRestExtension extends Extension implements PrependExtensionInterface
 
         $container->setParameter($this->getAlias().'.routing.loader.default_format', $config['routing_loader']['default_format']);
         $container->setParameter($this->getAlias().'.routing.loader.include_format', $config['routing_loader']['include_format']);
+        $container->setParameter($this->getAlias().'.routing.loader.skip_typehinted', $config['routing_loader']['skip_typehinted']);
 
         foreach ($config['exception']['codes'] as $exception => $code) {
             if (!is_numeric($code)) {
