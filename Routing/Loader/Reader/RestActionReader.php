@@ -53,6 +53,11 @@ class RestActionReader
     private $includeFormat;
 
     /**
+     * @var bool
+     */
+    private $skipTypehinted;
+
+    /**
      * @var string|null
      */
     private $routePrefix;
@@ -113,13 +118,14 @@ class RestActionReader
      * @param bool                 $includeFormat
      * @param array                $formats
      */
-    public function __construct(Reader $annotationReader, ParamReaderInterface $paramReader, InflectorInterface $inflector, $includeFormat, array $formats = [])
+    public function __construct(Reader $annotationReader, ParamReaderInterface $paramReader, InflectorInterface $inflector, $includeFormat, array $formats = [], $skipTypeHinted = false)
     {
         $this->annotationReader = $annotationReader;
         $this->paramReader = $paramReader;
         $this->inflector = $inflector;
         $this->includeFormat = $includeFormat;
         $this->formats = $formats;
+        $this->skipTypeHinted = $skipTypeHinted;
     }
 
     /**
@@ -475,16 +481,16 @@ class RestActionReader
             \Symfony\Component\HttpFoundation\Request::class,
             \FOS\RestBundle\Request\ParamFetcherInterface::class,
             \Symfony\Component\Validator\ConstraintViolationListInterface::class,
-            \Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter::class,
         ];
 
         $arguments = [];
         foreach ($method->getParameters() as $argument) {
-            if (isset($params[$argument->getName()])) {
+            $argumentClass = $argument->getClass();
+
+            if (isset($params[$argument->getName()]) || ($argumentClass && $this->skipTypehinted)) {
                 continue;
             }
 
-            $argumentClass = $argument->getClass();
             if ($argumentClass) {
                 $className = $argumentClass->getName();
                 foreach ($ignoreClasses as $class) {

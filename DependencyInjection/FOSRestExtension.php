@@ -57,6 +57,8 @@ class FOSRestExtension extends Extension
         $container->getDefinition('fos_rest.routing.loader.xml_collection')->replaceArgument(2, $config['routing_loader']['include_format']);
         $container->getDefinition('fos_rest.routing.loader.reader.action')->replaceArgument(3, $config['routing_loader']['include_format']);
 
+        $container->getDefinition('fos_rest.routing.loader.reader.action')->replaceArgument(5, $config['routing_loader']['skip_type_hinted']);
+
         // The validator service alias is only set if validation is enabled for the request body converter
         $validator = $config['service']['validator'];
         unset($config['service']['validator']);
