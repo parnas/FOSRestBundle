@@ -55,7 +55,7 @@ class RestActionReader
     /**
      * @var bool
      */
-    private $skipTypehinted;
+    private $skipTypeHinted;
 
     /**
      * @var string|null
@@ -117,6 +117,7 @@ class RestActionReader
      * @param InflectorInterface   $inflector
      * @param bool                 $includeFormat
      * @param array                $formats
+     * @param bool                 $skipTypeHinted
      */
     public function __construct(Reader $annotationReader, ParamReaderInterface $paramReader, InflectorInterface $inflector, $includeFormat, array $formats = [], $skipTypeHinted = false)
     {
@@ -487,7 +488,7 @@ class RestActionReader
         foreach ($method->getParameters() as $argument) {
             $argumentClass = $argument->getClass();
 
-            if (isset($params[$argument->getName()]) || ($argumentClass && $this->skipTypehinted)) {
+            if (isset($params[$argument->getName()]) || ($argumentClass && $this->skipTypeHinted)) {
                 continue;
             }
 
