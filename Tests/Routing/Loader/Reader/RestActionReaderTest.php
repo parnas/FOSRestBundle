@@ -12,6 +12,10 @@
 namespace FOS\RestBundle\Tests\Routing\Loader\Reader;
 
 use FOS\RestBundle\Routing\Loader\Reader\RestActionReader;
+use FOS\RestBundle\Request\ParamReaderInterface;
+use Doctrine\Common\Annotations\Reader;
+use FOS\RestBundle\Inflector\InflectorInterface;
+
 
 /**
  * RestActionReader test.
@@ -19,20 +23,32 @@ use FOS\RestBundle\Routing\Loader\Reader\RestActionReader;
  */
 class RestActionReaderTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var Reader
+     */
+    private $annotationReader;
+
+    /**
+     * @var ParamReaderInterface
+     */
+    private $paramReader;
+
+    /**
+     * @var InflectorInterface
+     */
+    private $inflector;
+
 
     public function setup()
     {
-        $this->annotationReader = $this->getMockBuilder('Doctrine\Common\Annotations\Reader')
+        $this->annotationReader = $this->getMockBuilder(Reader::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->paramReader = $this->getMockBuilder('FOS\RestBundle\Request\ParamReader')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->paramReader = $this->getMockBuilder(ParamReaderInterface::class)->getMock();
 
-        $this->inflectorInterface = $this->getMockBuilder('FOS\RestBundle\Util\Inflector\InflectorInterface')
-            ->disableOriginalConstructor()
-            ->getMock();
+
+        $this->inflector = $this->getMockBuilder(InflectorInterface::class)->getMock();
 
     }
 
@@ -56,7 +72,7 @@ class RestActionReaderTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue(array()));
 
         $actionReader = new RestActionReader(
-            $this->annotationReader, $this->paramReader, $this->inflectorInterface, ''
+            $this->annotationReader, $this->paramReader, $this->inflector, ''
         );
 
         $this->assertCount(2, $this->callGetMethodArguments($actionReader));
@@ -70,13 +86,13 @@ class RestActionReaderTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue(array('parameter' => 1)));
 
         $actionReader = new RestActionReader(
-            $this->annotationReader, $this->paramReader, $this->inflectorInterface, ''
+            $this->annotationReader, $this->paramReader, $this->inflector, ''
         );
 
         $this->assertCount(1, $this->callGetMethodArguments($actionReader));
     }
 
-    public function testGetMethodArgumentsWithoutTypehint()
+    public function testGetMethodArgumentsWithoutTypeHint()
     {
         $this->paramReader
             ->expects($this->once())
@@ -84,7 +100,7 @@ class RestActionReaderTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue(array()));
 
         $actionReader = new RestActionReader(
-            $this->annotationReader, $this->paramReader, $this->inflectorInterface, '', array(), true
+            $this->annotationReader, $this->paramReader, $this->inflector, '', array(), true
         );
 
         $this->assertCount(1, $this->callGetMethodArguments($actionReader));
